@@ -9,6 +9,10 @@ const onListClick = () => {
 <template>
   <div class="app">
     <h1>Weather</h1>
+    <nav>
+      <router-link to="/">Accueil</router-link>
+      <router-link to="/villes">Villes</router-link>
+    </nav>
     <button @click="onListClick">Cliquez !</button>
     <RouterView></RouterView>
   </div>
