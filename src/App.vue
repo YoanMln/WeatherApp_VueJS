@@ -1,5 +1,5 @@
 <script setup>
-import citiesList from "./views/citiesList.vue";
+import { RouterView } from "vue-router";
 
 const onListClick = () => {
   alert("un utilisateur à cliqué :O !");
@@ -10,7 +10,7 @@ const onListClick = () => {
   <div class="app">
     <h1>Weather</h1>
     <button @click="onListClick">Cliquez !</button>
-    <citiesList></citiesList>
+    <RouterView></RouterView>
   </div>
 </template>
 
