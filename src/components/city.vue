@@ -1,5 +1,8 @@
 <script setup>
-defineProps({
+import { format } from "timeago.js";
+import { computed } from "vue";
+
+const props = defineProps({
   name: {
     type: String,
     required: true,
@@ -13,9 +16,13 @@ defineProps({
     required: true,
   },
   updatedAt: {
-    type: String,
+    type: Date,
     required: true,
   },
+});
+
+const formattedDate = computed(() => {
+  return format(props.updatedAt, "fr");
 });
 </script>
 
@@ -24,7 +31,7 @@ defineProps({
     <h1>{{ name }}</h1>
     <p>Météo : {{ weather }}</p>
     <p>Température : {{ temperature }}°C</p>
-    <p>MAJ : {{ updatedAt }}</p>
+    <p>MAJ : {{ formattedDate }}</p>
   </div>
 </template>
 
