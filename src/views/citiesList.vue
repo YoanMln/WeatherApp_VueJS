@@ -4,24 +4,26 @@ import { reactive } from "vue";
 const cities = reactive([
   {
     id: 1,
-    name: "Annecy",
-    weather: "Ensoleillé",
+    name: "🇫🇷Annecy",
+    weather: "⛅️Ensoleillé",
     temperature: 8,
     updatedAt: new Date(),
   },
   {
     id: 2,
-    name: "Ville",
-    weather: "Peu nuageux",
-    temperature: 5,
+    name: "🇨🇦Québec",
+    weather: "☁️Peu nuageux",
+    temperature: -5,
     updatedAt: new Date(),
   },
 ]);
 </script>
 
 <template>
-  <h1>Weather - List of cities</h1>
-
+  <div class="container-title">
+    <h1 class="title-citiesList">Weather</h1>
+    <h2>Liste des villes</h2>
+  </div>
   <City
     v-for="city in cities"
     :key="city.id"
@@ -31,3 +33,9 @@ const cities = reactive([
     :updatedAt="city.updatedAt"
   />
 </template>
+
+<style scoped>
+.container-title {
+  text-align: center;
+}
+</style>

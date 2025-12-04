@@ -37,6 +37,7 @@ defineProps({
   margin-right: auto;
   max-width: 300px;
   @include card;
+  font-weight: bold;
 }
 h1 {
   color: white;
