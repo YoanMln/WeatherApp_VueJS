@@ -39,6 +39,7 @@ onMounted(() => {
   </div>
   <p v-if="loading">Requête en cours...</p>
   <p v-if="error" style="color: red">{{ error }}</p>
+  <div class="city-container">
   <City
     v-for="city in cities"
     :key="city.id"
@@ -47,10 +48,21 @@ onMounted(() => {
     :temperature="city.main.temp"
     :updatedAt="new Date(city.dt * 1000).toLocaleTimeString()"
   />
+</div>
 </template>
 
 <style scoped>
 .container-title {
   text-align: center;
+  
+}
+
+.city-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin: 0;
+ ;
+  
 }
 </style>

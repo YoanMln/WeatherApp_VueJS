@@ -27,7 +27,7 @@ const formattedDate = computed(() => {
 </script>
 
 <template>
-  <div class="city-container">
+  <div class="city">
     <h1>{{ name }}</h1>
     <p>Météo : {{ weather }}</p>
     <p>Température : {{ temperature }}°C</p>
@@ -36,7 +36,7 @@ const formattedDate = computed(() => {
 </template>
 
 <style scoped lang="scss">
-.city-container {
+.city {
   text-align: center;
   margin-top: 5rem;
   padding: 1rem;
@@ -47,6 +47,6 @@ const formattedDate = computed(() => {
   font-weight: bold;
 }
 h1 {
-  color: white;
+  color: black;
 }
 </style>
