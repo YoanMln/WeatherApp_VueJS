@@ -1,11 +1,22 @@
-<script setup></script>
+<script setup>
+import CitiesMap from "@/components/CitiesMap.vue";
+</script>
 
 <template>
-  <h1>Accueil</h1>
+  <div class="home-container">
+    <h1>Accueil</h1>
+    <CitiesMap />
+  </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
+.home-container {
+  padding: 2rem;
+}
+
 h1 {
-  color: green;
+  text-align: center;
+  color: white;
+  margin-bottom: 2rem;
 }
 </style>
