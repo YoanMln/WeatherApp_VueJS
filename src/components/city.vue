@@ -16,13 +16,16 @@ const props = defineProps({
     required: true,
   },
   updatedAt: {
-    type: Date,
+    type: [Date, String],
     required: true,
   },
 });
 
 const formattedDate = computed(() => {
-  return format(props.updatedAt, "fr");
+  if (props.updatedAt instanceof Date) {
+    return format(props.updatedAt, "fr");
+  }
+  return props.updatedAt;
 });
 </script>
 
