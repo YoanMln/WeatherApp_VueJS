@@ -1,13 +1,18 @@
 <script setup>
 import "leaflet/dist/leaflet.css";
-import { LMap, LTileLayer, LMarker } from "@vue-leaflet/vue-leaflet";
+import {
+  LMap,
+  LTileLayer,
+  LMarker,
+  LPopup,
+  LTooltip,
+} from "@vue-leaflet/vue-leaflet";
 import { ref, onMounted } from "vue";
 import L from "leaflet";
 
- 
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -16,55 +21,558 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow,
 });
 
-const cities = ref([]);
+const API_KEY = "160ea62556fee24be34561eb778643b1";
 
-onMounted(() => {
-  cities.value = [
-    {
-      id: 1,
-      name: "Annecy",
-      lat: 45.8992,
-      lon: 6.1294,
-      weather: "sun",
-    },
-    {
-      id: 2,
-      name: "Lyon",
-      lat: 45.764,
-      lon: 4.8357,
-      weather: "cloud",
-    },
+const cities = ref([]);
+const selectedCity = ref(null);
+const showAddForm = ref(false);
+const cityName = ref("");
+const isLoading = ref(false);
+const errorMessage = ref("");
+
+const getWeatherIcon = (weather) => {
+  const icons = {
+    sun: "☀️",
+    cloud: "☁️",
+    rain: "🌧️",
+    snow: "❄️",
+    storm: "⛈️",
+  };
+  return icons[weather] || "🌤️";
+};
+
+const getWeatherText = (weather) => {
+  const texts = {
+    sun: "Ensoleillé",
+    cloud: "Nuageux",
+    rain: "Pluvieux",
+    snow: "Neigeux",
+    storm: "Orageux",
+  };
+  return texts[weather] || "Partiellement nuageux";
+};
+
+const getWeatherType = (main) => {
+  if (main === "Clear") return "sun";
+  if (main === "Clouds") return "cloud";
+  if (main === "Rain" || main === "Drizzle") return "rain";
+  if (main === "Snow") return "snow";
+  if (main === "Thunderstorm") return "storm";
+  return "cloud";
+};
+
+const selectCity = (city) => {
+  selectedCity.value = city;
+  console.log("Ville sélectionnée:", city);
+};
+
+const toggleAddForm = () => {
+  showAddForm.value = !showAddForm.value;
+  errorMessage.value = "";
+};
+
+const addCityByName = async () => {
+  if (!cityName.value.trim()) {
+    errorMessage.value = "Veuillez entrer un nom de ville";
+    return;
+  }
+
+  isLoading.value = true;
+  errorMessage.value = "";
+
+  try {
+    const geoResponse = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+        cityName.value
+      )}&limit=1`
+    );
+
+    const geoData = await geoResponse.json();
+
+    if (geoData.length === 0) {
+      errorMessage.value = "Ville non trouvée. Vérifiez l'orthographe.";
+      isLoading.value = false;
+      return;
+    }
+
+    const cityData = geoData[0];
+    const lat = parseFloat(cityData.lat);
+    const lon = parseFloat(cityData.lon);
+
+    const weatherResponse = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=fr`
+    );
+
+    const weatherData = await weatherResponse.json();
+
+    const newCity = {
+      id: Date.now(),
+      name: cityData.display_name.split(",")[0],
+      lat: lat,
+      lon: lon,
+      weather: getWeatherType(weatherData.weather[0].main),
+      temperature: Math.round(weatherData.main.temp),
+      description: weatherData.weather[0].description,
+      humidity: weatherData.main.humidity,
+      windSpeed: weatherData.wind.speed,
+      updatedAt: new Date(weatherData.dt * 1000).toLocaleTimeString("fr-FR"),
+    };
+
+    cities.value.push(newCity);
+
+    cityName.value = "";
+    showAddForm.value = false;
+  } catch (error) {
+    errorMessage.value =
+      "Erreur lors de la recherche de la ville ou de la météo";
+    console.error("Erreur:", error);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const removeCity = (cityId) => {
+  cities.value = cities.value.filter((city) => city.id !== cityId);
+};
+
+onMounted(async () => {
+  const initialCities = [
+    { name: "Annecy", lat: 45.8992, lon: 6.1294 },
+    { name: "Lyon", lat: 45.764, lon: 4.8357 },
   ];
+
+  for (const city of initialCities) {
+    try {
+      const weatherResponse = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${city.lat}&lon=${city.lon}&appid=${API_KEY}&units=metric&lang=fr`
+      );
+      const weatherData = await weatherResponse.json();
+
+      cities.value.push({
+        id: Date.now() + Math.random(),
+        name: city.name,
+        lat: city.lat,
+        lon: city.lon,
+        weather: getWeatherType(weatherData.weather[0].main),
+        temperature: Math.round(weatherData.main.temp),
+        description: weatherData.weather[0].description,
+        humidity: weatherData.main.humidity,
+        windSpeed: weatherData.wind.speed,
+        updatedAt: new Date(weatherData.dt * 1000).toLocaleTimeString("fr-FR"),
+      });
+    } catch (error) {
+      console.error(`Erreur lors du chargement de ${city.name}:`, error);
+    }
+  }
 });
 </script>
 
 <template>
-  <div id="map">
-    <l-map
-      style="height: 500px; width: 100%"
-      :zoom="6"
-      :center="[46.5, 2.5]"
-    >
-      <l-tile-layer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      ></l-tile-layer>
+  <div class="map-container">
+    <div class="container-header">
+      <div class="map-header">
+        <h1 class="title">🗺️ Météo des villes</h1>
+        <div class="header-actions">
+          <div class="city-count">{{ cities.length }} villes</div>
+          <button @click="toggleAddForm" class="add-btn">
+            {{ showAddForm ? "✖ Fermer" : "➕ Ajouter une ville" }}
+          </button>
+        </div>
+      </div>
 
-      <l-marker
-        v-for="city in cities"
-        :key="city.id"
-        :lat-lng="[city.lat, city.lon]"
+      <div v-if="showAddForm" class="add-form">
+        <h3>🏙️ Ajouter une nouvelle ville</h3>
+        <div class="simple-form">
+          <input
+            v-model="cityName"
+            type="text"
+            placeholder="Entrez le nom de la ville (ex: Paris, Tokyo, New York)"
+            @keyup.enter="addCityByName"
+            class="city-input"
+          />
+
+          <div v-if="errorMessage" class="error-message">
+            ⚠️ {{ errorMessage }}
+          </div>
+
+          <button
+            @click="addCityByName"
+            class="submit-btn"
+            :disabled="isLoading"
+          >
+            {{
+              isLoading ? "Recherche de la météo..." : " Ajouter la ville"
+            }}
+          </button>
+
+         
+        </div>
+      </div>
+
+      <div class="cities-list" v-if="cities.length > 0">
+        <h3>📍 Villes enregistrées</h3>
+        <div class="city-item" v-for="city in cities" :key="city.id">
+          <span class="city-name">{{ city.name }}</span>
+          <div class="city-info">
+            <span class="city-weather">{{ getWeatherIcon(city.weather) }}</span>
+            <span class="city-temp" v-if="city.temperature"
+              >{{ city.temperature }}°C</span
+            >
+          </div>
+          <button @click="removeCity(city.id)" class="remove-btn">🗑️</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="map">
+      <l-map
+        style="height: 100%; width: 100%"
+        :zoom="6"
+        :center="[46.5, 2.5]"
+        :options="{ zoomControl: true }"
       >
-      </l-marker>
-    </l-map>
+        <l-tile-layer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        ></l-tile-layer>
+
+        <l-marker
+          v-for="city in cities"
+          :key="city.id"
+          :lat-lng="[city.lat, city.lon]"
+        >
+          <l-tooltip :options="{ permanent: false, direction: 'top' }">
+            {{ city.name }}
+          </l-tooltip>
+
+          <l-popup>
+            <div class="popup-content">
+              <h3>{{ city.name }}</h3>
+              <div class="weather-info">
+                <span class="weather-icon">{{
+                  getWeatherIcon(city.weather)
+                }}</span>
+                <div class="weather-details">
+                  <span class="weather-text">{{
+                    getWeatherText(city.weather)
+                  }}</span>
+                  <span class="weather-temp" v-if="city.temperature">
+                    {{ city.temperature }}°C
+                  </span>
+                  <span class="weather-desc" v-if="city.description">
+                    {{ city.description }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="extra-info" v-if="city.humidity">
+                <p>💧 Humidité: {{ city.humidity }}%</p>
+                <p>🌬️ Vent: {{ city.windSpeed }} m/s</p>
+                <p>🕐 MAJ: {{ city.updatedAt }}</p>
+              </div>
+            </div>
+          </l-popup>
+        </l-marker>
+      </l-map>
+    </div>
   </div>
 </template>
 
-<style scoped>
-#map {
+<style scoped lang="scss">
+.title {
+  font-size: 25px;
+}
+
+.map-container {
   width: 100%;
-  height: 500px;
-  margin: 2rem auto;
   max-width: 1200px;
+  margin: 2rem auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.container-header {
+  background: transparent;
+}
+
+.map-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  @include card;
+  color: white;
+}
+
+.map-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.header-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.city-count {
+  @include card;
+  padding: 10px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.add-btn {
+  @include card;
+  color: white;
+  padding: 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 1s;
+}
+
+.add-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.add-form {
+  @include card;
+
+  padding: 2rem;
+}
+
+.add-form h3 {
+  margin: 0 0 1.5rem 0;
+  color: white;
+}
+
+.simple-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.city-input {
+  padding: 0.9rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+  @include card;
+}
+
+::placeholder {
+  color: white;
+}
+
+.city-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.error-message {
+  padding: 0.8rem;
+  background: #ffe0e0;
+  color: #d32f2f;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.submit-btn {
+  @include overlay;
+  color: white;
+  border: none;
+  padding: 10px;
+  
+  border-radius: 10px;
+  margin: 0 auto;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s;
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+.cities-list {
+  padding: 1.5rem;
+  @include card;
+
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.cities-list h3 {
+  margin: 0 0 1rem 0;
+  color: white;
+  font-size: 1.1rem;
+}
+
+.city-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
+  transition: all 0.3s;
+  @include card;
+}
+
+.city-item:hover {
+  transform: translateX(5px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.city-name {
+  flex: 1;
+  font-weight: 600;
+  color: white;
+}
+
+.city-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.city-weather {
+  font-size: 1.5rem;
+}
+
+.city-temp {
+  font-weight: 600;
+  color: black;
+  font-size: 1.1rem;
+}
+
+.remove-btn {
+  background: #ff475698;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 1rem;
+}
+
+.remove-btn:hover {
+  background: #ee5a6f;
+  transform: scale(1.1);
+}
+
+#map {
+  height: 600px;
+  width: 100%;
+  position: relative;
+}
+
+:deep(.popup-content) {
+  text-align: center;
+  padding: 0.5rem;
+  @include card;
+}
+
+:deep(.leaflet-popup-content-wrapper) {
+  @include card;
+}
+
+:deep(.popup-content h3) {
+  margin: 0 0 0.5rem 0;
+  color: #667eea;
+  font-size: 1.2rem;
+}
+
+:deep(.weather-info) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  margin: 1rem 0;
+}
+
+:deep(.weather-icon) {
+  font-size: 2.5rem;
+}
+
+:deep(.weather-details) {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+
+:deep(.weather-text) {
+  font-weight: 600;
+  color: black;
+}
+
+:deep(.weather-temp) {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #667eea;
+}
+
+:deep(.weather-desc) {
+  font-size: 0.9rem;
+  color: black;
+  font-style: italic;
+  text-transform: capitalize;
+}
+
+:deep(.extra-info) {
+  padding: 0.5rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+}
+
+:deep(.extra-info p) {
+  margin: 0.3rem 0;
+  color: black;
+}
+
+:deep(.leaflet-popup-close-button) {
+  display: none;
+}
+
+:deep(.leaflet-control-zoom-in),
+:deep(.leaflet-control-zoom-out) {
+  @include card;
+}
+
+@media (max-width: 768px) {
+  #map {
+    height: 400px;
+  }
+
+  .map-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .header-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .add-btn {
+    width: 100%;
+  }
 }
 </style>
