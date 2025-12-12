@@ -139,6 +139,7 @@ onMounted(async () => {
   const initialCities = [
     { name: "Annecy", lat: 45.8992, lon: 6.1294 },
     { name: "Lyon", lat: 45.764, lon: 4.8357 },
+    { name: "Paris", lat: 48.8566, lon: 2.3522 },
   ];
 
   for (const city of initialCities) {
@@ -200,12 +201,8 @@ onMounted(async () => {
             class="submit-btn"
             :disabled="isLoading"
           >
-            {{
-              isLoading ? "Recherche de la météo..." : " Ajouter la ville"
-            }}
+            {{ isLoading ? "Recherche de la météo..." : " Ajouter la ville" }}
           </button>
-
-         
         </div>
       </div>
 
@@ -388,7 +385,7 @@ onMounted(async () => {
   color: white;
   border: none;
   padding: 10px;
-  
+
   border-radius: 10px;
   margin: 0 auto;
   cursor: pointer;
@@ -406,7 +403,6 @@ onMounted(async () => {
   opacity: 0.6;
   cursor: not-allowed;
 }
-
 
 .cities-list {
   padding: 1.5rem;
@@ -480,8 +476,4 @@ onMounted(async () => {
   width: 100%;
   position: relative;
 }
-
-
-
-
 </style>
