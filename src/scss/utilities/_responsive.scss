@@ -17,4 +17,23 @@
   .add-btn {
     width: 100%;
   }
+
+  .city-container {
+    grid-template-columns: 1fr;
+  }
+
+  .select-container {
+    padding: 10px;
+    width: 90%;
+    margin: 3rem auto;
+
+    h1 {
+      font-size: 15px;
+    }
+
+    select {
+      width: 200px;
+    }
+    
+  }
 }
