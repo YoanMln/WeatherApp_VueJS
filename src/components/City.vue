@@ -30,26 +30,34 @@ const formattedDate = computed(() => {
 </script>
 
 <template>
-  <div class="city">
-    <h1>{{ name }}</h1>
-    <p>Météo : {{ weather }}</p>
-    <p>Température : {{ temperature }}°C</p>
-    <p>MAJ : {{ formattedDate }}</p>
+  <div class="cards-container">
+    <div class="city-card">
+      <h1>📍{{ name }}</h1>
+      <p>Météo: {{ weather }}</p>
+      <p>Température: {{ temperature }}°C</p>
+      <p>MAJ: {{ formattedDate }}</p>
+    </div>
   </div>
 </template>
 
 <style scoped lang="scss">
-.city {
-  text-align: center;
+.cards-container {
+  border-radius: 20px;
+  padding: 1.2rem;
+  margin: 0 auto;
   margin-top: 5rem;
-  padding: 1rem;
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 300px;
-  @include card;
-  font-weight: bold;
-}
-h1 {
-  color: black;
+  width: 350px;
+  @include card-container;
+
+  .city-card {
+    @include city-card;
+    border-radius: 20px;
+    text-align: center;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+  }
 }
 </style>
