@@ -5,9 +5,24 @@
   backdrop-filter: blur(8.4px);
   -webkit-backdrop-filter: blur(8.4px);
   border: 1px solid rgba(255, 255, 255, 0.48);
+  border-radius: 20px;
 }
 
 @mixin overlay {
   background-color: rgba(0, 0, 0, 0.462);
-  
+}
+
+@mixin card-container {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+@mixin city-card {
+  background: rgba(228, 228, 228, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
