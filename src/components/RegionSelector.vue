@@ -36,13 +36,12 @@ watch(selectedRegion, (value) => {
 <style lang="scss">
 .select-container {
   h1 {
-    font-size: 20px;
+    font-size: 15px;
   }
 
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
+  justify-content: space-around;
   @include card;
   padding: 5px;
   margin: 5rem auto;
@@ -50,7 +49,7 @@ watch(selectedRegion, (value) => {
   width: 30%;
 
   select {
-    width: 300px;
+    width: 215px;
     height: 40px;
     color: white;
     font-size: 15px;

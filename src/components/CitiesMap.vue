@@ -223,7 +223,7 @@ onMounted(async () => {
             class="submit-btn"
             :disabled="isLoading"
           >
-            {{ isLoading ? "Recherche de la météo..." : " Ajouter la ville" }}
+            {{ isLoading ? "Recherche de la météo..." : "Ajouter la ville" }}
           </button>
         </div>
       </div>
@@ -289,7 +289,7 @@ onMounted(async () => {
               <div class="extra-info" v-if="city.humidity">
                 <p>💧 Humidité: {{ city.humidity }}%</p>
                 <p>🌬️ Vent: {{ city.windSpeed }} m/s</p>
-                <p>🕐 MAJ: {{ city.updatedAt }}</p>
+                <p>🕐 Mise à jour: {{ city.updatedAt }}</p>
               </div>
             </div>
           </l-popup>
