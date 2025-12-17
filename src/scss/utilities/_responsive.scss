@@ -20,10 +20,12 @@
 
   .city-container {
     grid-template-columns: 1fr;
+    padding-bottom: 2rem;
   }
 
   .cards-container {
     padding: 0.5rem !important;
+    margin-top: 2rem !important;
   }
 
   .select-container {
