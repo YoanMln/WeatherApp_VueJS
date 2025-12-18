@@ -1,8 +1,8 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 
-import citiesList from "@/views/CitiesList.vue";
+import citiesList from "@/views/Region.vue";
 import home from "@/views/home.vue";
-import CityView from "@/views/CityView.vue";
+import CityView from "@/views/CityForecast.vue";
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
