@@ -2,7 +2,7 @@
 import { ref, onMounted, watch } from "vue";
 import City from "@/components/City.vue";
 import RegionSelector from "@/components/RegionSelector.vue";
-import { getWeatherByCities } from "@/services/weatherService";
+import { getForecast } from "@/services/weatherService";
 
 const regions = ["Auvergne-Rhône-Alpes", "Île-de-France", "PACA"];
 const citiesByRegion = {
@@ -21,7 +21,7 @@ async function fetchMultipleCities(cityNames) {
   error.value = null;
 
   try {
-    cities.value = await getWeatherByCities(cityNames);
+    cities.value = await getForecast(cityNames);
   } catch (err) {
     error.value = err.message;
   } finally {

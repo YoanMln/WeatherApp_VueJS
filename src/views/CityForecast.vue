@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import City from "@/components/City.vue";
-import { getWeatherByCity } from "@/services/weatherService";
+import { getForecastByCity } from "@/services/weatherService";
 
 const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
 
@@ -18,7 +18,7 @@ const fetchWeather = async (city) => {
   error.value = null;
 
   try {
-    const data = await getWeatherByCity(city);
+    const data = await getForecastByCity(city);
 
     cityName.value = data.city.name;
     forecast.value = data.list
@@ -30,7 +30,6 @@ const fetchWeather = async (city) => {
       "fr-FR"
     );
   } catch (err) {
-    clearTimeout(timeout);
     error.value = err.message;
   } finally {
     loading.value = false;

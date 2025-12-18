@@ -12,14 +12,20 @@ async function fetchWeather(url) {
   return response.json();
 }
 
-// Recupere les data pour une ville + prévisions //
+// Recupere les data pour une ville //
 export async function getWeatherByCity(city) {
+  const url = `${BASE_URL}?q=${city}&appid=${API_KEY}&units=metric&lang=fr`;
+  return fetchWeather(url);
+}
+
+// Recupere les data pour une ville + prévisions //
+export async function getForecastByCity(city) {
   const url = `${URL_FORECAST}?q=${city}&appid=${API_KEY}&units=metric&lang=fr&cnt=40`;
   return fetchWeather(url);
 }
 
 // Recupere les data pour plusieurs villes //
-export async function getWeatherByCities(cities) {
+export async function getForecast(cities) {
   const requests = cities.map((city) => getWeatherByCity(city));
   return Promise.all(requests);
 }
