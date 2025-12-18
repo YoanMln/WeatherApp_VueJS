@@ -68,11 +68,11 @@ const changeCity = (newCity) => {
       <div class="search">
         <input
           v-model="cityName"
-          @keyup.enter="fetchWeather(cityName.value)"
+          @keyup.enter="fetchWeather(cityName)"
           placeholder="Entrez une ville..."
           class="search-input"
         />
-        <button @click="fetchWeather(cityName.value)" class="search-btn">
+        <button @click="fetchWeather(cityName)" class="search-btn">
           Rechercher
         </button>
       </div>

@@ -20,6 +20,7 @@ export async function getWeatherByCity(city) {
 
 // Recupere les data pour une ville + prévisions //
 export async function getForecastByCity(city) {
+  const cityEncoded = encodeURIComponent(city.trim());
   const url = `${URL_FORECAST}?q=${city}&appid=${API_KEY}&units=metric&lang=fr&cnt=40`;
   return fetchWeather(url);
 }

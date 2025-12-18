@@ -69,7 +69,7 @@ const weatherClass = computed(() => {
       <nav v-else>
         <router-link to="/">Carte</router-link>
         <router-link to="/villes">Liste des Villes</router-link>
-        <router-link to="/ville">Ville</router-link>
+        <router-link to="/ville">Prévisions</router-link>
       </nav>
 
       <RouterView v-if="!isLoading"></RouterView>
