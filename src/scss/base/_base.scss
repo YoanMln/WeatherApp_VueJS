@@ -5,11 +5,13 @@ body {
   #app.bg-clear {
     background: url(/images/weatherBackground/clear.webp) center/cover no-repeat
       fixed;
+    @include overylay-dynamic-bg;
   }
 
   #app.bg-clouds {
     background: url(/images/weatherBackground/clouds.webp) center/cover
       no-repeat fixed;
+      @include overylay-dynamic-bg;
   }
 
   #app.bg-rain {
@@ -19,17 +21,18 @@ body {
   #app.bg-snow {
     background: url(/images/weatherBackground/snow.webp) center/cover no-repeat
       fixed;
+      @include overylay-dynamic-bg;
   }
 
   #app.bg-default {
     background: url(/images/weatherBackground/default.webp) center/cover
       no-repeat fixed;
-    @include overlay;
+      @include overylay-dynamic-bg;
   }
 
   #app.bg-none {
     background: url(/images/weatherBackground/default.webp) center/cover
       no-repeat fixed;
-    @include overlay-background;
+      @include overylay-dynamic-bg;
   }
 }

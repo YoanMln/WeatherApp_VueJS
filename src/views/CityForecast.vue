@@ -47,9 +47,6 @@ const changeCity = (newCity) => {
 <template>
   <div class="city-view">
     <div class="city-selector">
-      <div class="title">
-        <h1>🌍 Météo en temps réel</h1>
-      </div>
       <div class="select-title">
         <h2>Sélectionner une ville</h2>
       </div>
@@ -171,5 +168,6 @@ button {
   @include card;
   padding: 20px;
   font-size: 20px;
+  cursor: pointer;
 }
 </style>
